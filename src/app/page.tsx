@@ -1,6 +1,7 @@
 import Categories from "@/components/Categories";
 import FeaturedMeals from "@/components/FeaturedMeals";
 import Hero from "@/components/Hero";
+import ProvidersPreview from "@/components/ProvidersPreview";
 
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       <Hero />
       <Categories />
       <FeaturedMeals />
+      <ProvidersPreview />
     </div>
   );
 }

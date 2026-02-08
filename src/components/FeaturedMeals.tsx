@@ -22,9 +22,9 @@ const FeaturedMeals = () => {
                             <Image
                                 src={meal.img}
                                 alt={meal.name}
-                                width={180}
-                                height={180}
-                                className="w-32 h-32 rounded-full object-cover"
+                                width={150}
+                                height={150}
+                                className="aspect-square object-cover rounded-full"
                             />
                             <h3 className="font-semibold text-gray-800">{meal.name}</h3>
                             <p className="text-gray-600 mt-1">${meal.price}</p>
