@@ -19,10 +19,12 @@ const Categories = () => {
                     {categoriesData.map((cat) => (
                         <div key={cat.id} className="bg-white rounded-lg shadow hover:shadow-lg p-4 flex flex-col items-center">
                             <Image
+                                style={{ height: 'auto' }}
                                 src={cat.img}
                                 alt={cat.name}
                                 width={120}
                                 height={120}
+
                                 className="rounded-full mb-2"
                             />
                             <span className="font-medium text-gray-800">{cat.name}</span>
