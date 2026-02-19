@@ -35,17 +35,26 @@ export function LoginForm({
     await authClient.signIn.email({
       email,
       password,
-      callbackURL: "/", // সফল হলে যেখানে পাঠাতে চান
+      // callbackURL: "/", // এটি বন্ধ রাখাই ভালো যদি ম্যানুয়ালি হ্যান্ডেল করেন
     }, {
       onRequest: () => setLoading(true),
-      onSuccess: () => {
+      onSuccess: async (ctx) => {
         setLoading(false);
-        alert("Login successful!");
-        router.push("/"); // হোম পেজে রিডাইরেক্ট
+        const user = ctx.data.user;
+
+        // রোল চেক করার আগে কনসোলে দেখে নিন আসলে কী আসছে
+        console.log("Current User Role:", user?.role);
+
+        if (user?.role === "ADMIN" || user?.role === "admin") {
+          // window.location.replace ব্যবহার করলে ব্রাউজার হিস্টোরি ক্লিন করে সরাসরি চলে যাবে
+          window.location.replace("/admin/dashboard");
+        } else {
+          window.location.replace("/");
+        }
       },
       onError: (ctx) => {
         setLoading(false);
-        alert(ctx.error.message); // এরর মেসেজ দেখাবে
+        alert(ctx.error.message);
       },
     });
   };
