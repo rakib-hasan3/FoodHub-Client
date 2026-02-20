@@ -39,7 +39,7 @@ export default function ReviewsPage() {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-6 text-slate-800">Reviews</h1>
+            <h1 className="text-3xl text-center mb-2 font-bold mb-6 text-slate-800">Reviews</h1>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-100 space-y-4 p-6">
                 {reviews && reviews.length > 0 ? (
