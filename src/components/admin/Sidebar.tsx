@@ -1,19 +1,41 @@
-// components/admin/Sidebar.tsx
 "use client"
 import Link from "next/link";
 import { adminMenu } from "@/config/adminMenu";
 import { LogOut } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 export default function Sidebar() {
 
-    const handleLogout = () => {
-        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    const handleLogout = async () => {
+        try {
+            // ১. Better Auth-এর মাধ্যমে সেশন শেষ করা
+            await authClient.signOut({
+                fetchOptions: {
+                    onSuccess: () => {
+                        // ২. সেশন সাকসেসফুলি শেষ হলে সবকিছু ক্লিয়ার করা
+                        localStorage.clear();
+                        sessionStorage.clear();
 
-        document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                        // ৩. লুপ বন্ধ করতে সরাসরি হার্ড রিডাইরেক্ট
+                        window.location.replace("/login");
+                    }
+                }
+            });
+        } catch (err) {
+            console.error("Signout error", err);
+            // যদি এরর আসে, তবুও জোর করে বের করে দাও
+            localStorage.clear();
+            window.location.replace("/login");
+        }
 
-        localStorage.removeItem("user");
-        localStorage.clear();
-        window.location.href = "/login";
+        // ৪. মেমোরিতে থাকা কুকি ডিলিট করার ব্যাকআপ লুপ
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+        }
     };
 
     return (
@@ -27,6 +49,8 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
+                            // prefetch={false} যোগ করা হয়েছে যাতে অটো-রিলোড লুপ না হয়
+                            prefetch={false}
                             className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/20 text-gray-800 hover:text-black transition"
                         >
                             <Icon size={18} />
