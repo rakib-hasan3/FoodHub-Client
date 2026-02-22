@@ -64,9 +64,9 @@ export default async function MealsPage() {
                             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                         }}
                     >
-                        {meals.map((meal: MealType) => (
+                        {meals.map((meal: MealType, index) => (
                             <div key={meal.id} className="flex justify-center w-full">
-                                <MealCard meal={meal} />
+                                <MealCard key={`${meal.id}-${index}`} meal={meal} />
                             </div>
                         ))}
                     </div>

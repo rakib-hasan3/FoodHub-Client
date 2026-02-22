@@ -1,32 +1,27 @@
-"use client"; // এটি অবশ্যই একদম উপরে থাকতে হবে
-
-import { usePathname } from "next/navigation";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
+// src/app/layout.tsx
+import ClientLayout from "@/components/ClientLayout"; // পাথ চেক করুন
 import "./globals.css";
+import { Metadata } from "next";
+import { Toaster } from "react-hot-toast";
+
+export const metadata: Metadata = {
+  title: "Your App Name",
+  description: "Food delivery app",
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
-  // চেক করবে পাথ কি /admin দিয়ে শুরু হয়েছে কি না
-  const isAdminPath = pathname?.startsWith("/admin");
-
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        {/* যদি অ্যাডমিন না হয় তবেই কেবল Navbar দেখাবে */}
-        {!isAdminPath && <Navbar />}
-
-        <main className="min-h-screen">
+        {/* সব ক্লায়েন্ট লজিক এখন ClientLayout এর ভেতরে */}
+        <ClientLayout>
           {children}
-        </main>
-
-        {/* যদি অ্যাডমিন না হয় তবেই কেবল Footer দেখাবে */}
-        {!isAdminPath && <Footer />}
+          <Toaster position="top-right" />
+        </ClientLayout>
       </body>
     </html>
   );

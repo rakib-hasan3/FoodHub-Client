@@ -1,6 +1,21 @@
 "use client";
 import { MapPin, Utensils, ShoppingCart, Star } from "lucide-react";
 import { useRouter } from "next/navigation"; // রাউটিং এর জন্য
+import { useCart } from "@/app/context/CartContext";
+import { authClient } from "@/lib/auth-client";
+
+// export default function MealCard({ meal }: { meal: any }) {
+//     const { addToCart } = useCart();
+//     const { isSignedIn } = useUser();
+
+// const handleOrder = () => {
+//     if (!isSignedIn) {
+//         alert("Please login first to order!");
+//         return;
+//     }
+//     addToCart(meal);
+// };
+
 
 interface MealType {
     id: string;
@@ -18,22 +33,23 @@ interface MealType {
 }
 
 export default function MealCard({ meal }: { meal: MealType }) {
+    const session = authClient.useSession(); // এটি চেক করবে ইউজার লগইন কি না
+
     const router = useRouter();
+    const { addToCart } = useCart();
+    // const { isSignedIn } = useUser();
 
     const handleOrder = () => {
-        // ১. চেক করা হচ্ছে ইউজারের টোকেন আছে কি না (Local Storage বা Cookies থেকে)
-        const token = localStorage.getItem("accessToken"); // আপনার টোকেনের নাম অনুযায়ী দিন
 
-        if (!token) {
-            // ২. টোকেন না থাকলে লগইন পেজে পাঠিয়ে দিবে
-            alert("অর্ডার করতে হলে আগে লগইন করুন!");
+        if (!session?.data) {
+            alert("Please login first to order!");
             router.push("/login");
-        } else {
-            // ৩. টোকেন থাকলে অর্ডারের কাজ হবে (যেমন: কার্টে যোগ করা)
-            console.log("Proceeding to order:", meal.name);
-            // এখানে আপনি আপনার কার্ট লজিক বা অর্ডার এপিআই কল করতে পারেন
+            return;
         }
+
+        addToCart(meal);
     };
+
 
     return (
         <div className="group p-4 relative w-full rounded-lg max-w-[380px] bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col h-[480px]">
@@ -67,7 +83,7 @@ export default function MealCard({ meal }: { meal: MealType }) {
                     className="w-full mt-6 bg-gray-900 hover:bg-orange-500 text-black rounded-2xl py-4 font-bold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
                 >
                     <ShoppingCart size={18} />
-                    অর্ডার করুন
+                    Add to Cart
                 </button>
             </div>
         </div>
