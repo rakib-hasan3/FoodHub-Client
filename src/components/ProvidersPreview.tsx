@@ -1,67 +1,79 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-const providersData = [
-    {
-        id: 1,
-        name: "Pizza Palace",
-        address: "Dhanmondi, Dhaka",
-        image: "/provider-1.jpg",
-    },
-    {
-        id: 2,
-        name: "Burger Hub",
-        address: "Banani, Dhaka",
-        image: "/provider-2.jpg",
-    },
-    {
-        id: 3,
-        name: "Sushi World",
-        address: "Gulshan, Dhaka",
-        image: "/provider-3.jpg",
-    },
-    {
-        id: 4,
-        name: "Sweet Treats",
-        address: "Mirpur, Dhaka",
-        image: "/provider-4.jpg",
-    },
-];
+interface IProvider {
+    id: string;
+    restaurant_name: string;
+    address: string;
+    image: string;
+}
 
 const ProvidersPreview = () => {
+    const [providers, setProviders] = useState<IProvider[]>([]);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const fetchProviders = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/provider/allproviders");
+                const result = await response.json();
+                if (result.success && Array.isArray(result.data)) {
+                    setProviders(result.data);
+                }
+            } catch (error) {
+                console.error("Provider load error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProviders();
+    }, []);
+
+    if (loading) return <div className="py-10 text-center">Loading Providers...</div>;
+
     return (
         <section className="py-16 bg-zinc-50">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between mb-10">
                     <h2 className="text-3xl font-bold">Popular Providers</h2>
-                    <Button variant="outline">View All</Button>
+                    <Button variant="outline" onClick={() => router.push("/restaurants")}>
+                        View All
+                    </Button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                    {providersData.map((provider) => (
+                <div className="grid grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    {providers.slice(0, 4).map((provider, index) => (
                         <div
                             key={provider.id}
-                            className="bg-white rounded-lg shadow hover:shadow-lg transition overflow-hidden"
+                            className="bg-white rounded-lg shadow hover:shadow-lg transition flex flex-col h-full overflow-hidden"
                         >
-                            <Image
-                                src={provider.image}
-                                alt={provider.name}
-                                width={400}
-                                height={250}
-                                className="object-cover w-full h-[180px]"
-                            />
+                            <div className="relative h-[180px] w-full flex-shrink-0">
+                                <Image
+                                    src={provider.image || "/placeholder.jpg"} // লোকাল একটা ছবি public ফোল্ডারে রাখুন
+                                    alt={provider.restaurant_name}
+                                    fill
+                                    priority={true} // প্রথম দিকের ইমেজে এটা যোগ করুন
+                                    className="object-cover"
+                                />
+                            </div>
 
-                            <div className="p-4">
-                                <h3 className="font-semibold text-lg">
-                                    {provider.name}
+                            <div className="p-4 flex flex-col flex-grow">
+                                <h3 className="font-semibold text-lg line-clamp-1">
+                                    {provider.restaurant_name}
                                 </h3>
-                                <p className="text-sm text-gray-500 mt-1">
+                                <p className="text-sm text-gray-500 mt-1 line-clamp-1">
                                     {provider.address}
                                 </p>
 
-                                <Button className="mt-4 w-full">
+                                <Button
+                                    className="mt-auto w-full bg-primary text-white"
+                                    onClick={() => router.push(`/restaurants/${provider.id}`)}
+                                >
                                     View Menu
                                 </Button>
                             </div>

@@ -182,7 +182,7 @@ export function SignupForm() {
         </div>
 
         {/* SUBMIT */}
-        <Button onClick={handleSubmit} className="w-full h-11 text-base">
+        <Button onClick={handleSubmit} className="w-full mt-2  h-11 text-base">
           Create Account →
         </Button>
 

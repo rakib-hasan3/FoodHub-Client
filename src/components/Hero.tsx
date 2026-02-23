@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+    const router = useRouter();
     return (
         <section className="relative bg-gradient-to-r from-yellow-200 via-yellow-100 to-white py-20">
             <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10">
@@ -16,8 +18,8 @@ const Hero = () => {
                     <p className="text-lg text-gray-700">
                         Browse menus from your favorite providers and get fresh meals delivered fast. Easy, quick & tasty!
                     </p>
-                    <div>
-                        <Button className="bg-primary text-white px-6 py-2 rounded-lg">
+                    <div >
+                        <Button onClick={() => router.push("/meals")} className="bg-primary text-white px-6 py-2 rounded-lg">
                             Order Now
                         </Button>
                     </div>
