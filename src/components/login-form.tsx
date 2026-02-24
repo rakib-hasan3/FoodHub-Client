@@ -48,7 +48,10 @@ export function LoginForm({
         if (user?.role === "ADMIN" || user?.role === "admin") {
           // window.location.replace ব্যবহার করলে ব্রাউজার হিস্টোরি ক্লিন করে সরাসরি চলে যাবে
           window.location.replace("/admin/dashboard");
-        } else {
+        } else if (user?.role === "PROVIDER" || user?.role === "provider") {
+          window.location.replace("/provider/dashboard");
+        }
+        else {
           window.location.replace("/");
         }
       },
