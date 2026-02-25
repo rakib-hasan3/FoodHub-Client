@@ -1,20 +1,58 @@
 "use client";
+
 import Link from "next/link";
-import { LayoutDashboard, UtensilsCrossed, ShoppingBag, Settings, LogOut } from "lucide-react";
+import {
+    LayoutDashboard,
+    UtensilsCrossed,
+    ShoppingBag,
+    Settings,
+    LogOut,
+} from "lucide-react";
+import toast from "react-hot-toast";
 
 const ProviderSidebar = () => {
+
+    const providerId =
+        typeof window !== "undefined"
+            ? localStorage.getItem("providerId")
+            : null;
+
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        localStorage.clear();
+        toast.success("Logged out successfully");
+        window.location.href = "/";
+    };
+
     const menuItems = [
-        { name: "Dashboard", icon: <LayoutDashboard size={20} />, href: "/provider/dashboard" },
-        { name: "My Meals", icon: <UtensilsCrossed size={20} />, href: "/provider/my-meals" },
-        { name: "Orders", icon: <ShoppingBag size={20} />, href: "/provider/orders" },
-        { name: "Settings", icon: <Settings size={20} />, href: "/provider/settings" },
+        {
+            name: "Dashboard",
+            icon: <LayoutDashboard size={20} />,
+            href: providerId ? `/provider/dashboard/${providerId}` : "#",
+        },
+        {
+            name: "My Meals",
+            icon: <UtensilsCrossed size={20} />,
+            href: providerId ? `/provider/my-meals/${providerId}` : "#",
+        },
+        {
+            name: "Orders",
+            icon: <ShoppingBag size={20} />,
+            href: providerId ? `/provider/orders/${providerId}` : "#",
+        },
+        {
+            name: "Settings",
+            icon: <Settings size={20} />,
+            href: providerId ? `/provider/settings/${providerId}` : "#",
+        },
     ];
 
     return (
         <div className="w-60 bg-white h-screen shadow-md flex flex-col">
-            <div className="p-4 border-bottom">
+            <div className="p-4 border-b">
                 <h1 className="text-xl font-bold text-primary">Provider Panel</h1>
             </div>
+
             <nav className="flex-grow p-4">
                 {menuItems.map((item) => (
                     <Link
@@ -27,8 +65,12 @@ const ProviderSidebar = () => {
                     </Link>
                 ))}
             </nav>
+
             <div className="p-4 border-t">
-                <button className="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 w-full rounded-lg transition">
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 w-full rounded-lg transition"
+                >
                     <LogOut size={20} />
                     <span>Logout</span>
                 </button>
