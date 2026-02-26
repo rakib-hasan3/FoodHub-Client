@@ -41,13 +41,13 @@ export default async function ProviderMenuPage({ params }: { params: { id: strin
     const restaurantAddress = meals[0]?.provider?.address ?? "";
 
     return (
-        <main className="min-h-screen bg-gray-50/50 py-12">
-            <div className="max-w-7xl mx-auto px-4">
+        <main className="min-h-screen  bg-gray-50/50 py-12">
+            <div className="max-w-7xl mt-4 mx-auto px-4">
 
                 {/* Header Section: রেস্টুরেন্ট ইনফো */}
                 <header className="mb-12 bg-white p-10 rounded-[3rem] shadow-sm border border-gray-100 relative overflow-hidden text-center">
                     <div className="relative z-10">
-                        <div className="bg-orange-100 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <div className="bg-orange-100 w-16 mt-4 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <Store className="text-orange-600" size={32} />
                         </div>
                         <h1 className="text-4xl font-black text-gray-900 mb-2">{restaurantName}</h1>
@@ -62,7 +62,7 @@ export default async function ProviderMenuPage({ params }: { params: { id: strin
 
                 <div className="flex items-center gap-3 mb-8">
                     <UtensilsCrossed className="text-orange-500" />
-                    <h2 className="text-2xl font-bold text-gray-800">Available Meals</h2>
+                    <h2 className="text-2xl p-4  font-bold text-gray-800">Available Meals</h2>
                     <div className="h-[1px] flex-1 bg-gray-200"></div>
                 </div>
 

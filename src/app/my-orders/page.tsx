@@ -1,43 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Package, Clock, CheckCircle, XCircle } from "lucide-react";
 
 interface Order {
     id: string;
-    date: string;
+    createdAt: string;
     total: number;
-    status: "PENDING" | "CONFIRMED" | "DELIVERED" | "CANCELLED";
+    status: "PLACED" | "PREPARING" | "READY" | "DELIVERED" | "CANCELLED";
 }
 
-const orders: Order[] = [
-    {
-        id: "12345",
-        date: "Feb 22, 2026",
-        total: 850,
-        status: "DELIVERED",
-    },
-    {
-        id: "12346",
-        date: "Feb 21, 2026",
-        total: 420,
-        status: "PENDING",
-    },
-    {
-        id: "12347",
-        date: "Feb 20, 2026",
-        total: 650,
-        status: "CONFIRMED",
-    },
-];
-
 const statusConfig = {
-    PENDING: {
+    PLACED: {
         color: "text-yellow-600 bg-yellow-100",
         icon: Clock,
-        label: "Pending",
+        label: "Placed",
     },
-    CONFIRMED: {
+    PREPARING: {
         color: "text-blue-600 bg-blue-100",
         icon: Package,
-        label: "Confirmed",
+        label: "Preparing",
+    },
+    READY: {
+        color: "text-purple-600 bg-purple-100",
+        icon: Package,
+        label: "Ready",
     },
     DELIVERED: {
         color: "text-green-600 bg-green-100",
@@ -52,19 +39,37 @@ const statusConfig = {
 };
 
 export default function MyOrdersPage() {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        try {
+            const storedOrders = JSON.parse(
+                localStorage.getItem("myOrders") || "[]"
+            );
+
+            setOrders(storedOrders);
+        } catch (err) {
+            console.error("Failed to load orders", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
     return (
         <main className="min-h-screen mt-4 bg-gray-50/50 py-12">
             <div className="max-w-5xl mx-auto px-4">
                 {/* Header */}
-                <header className="mb-10 text-center" >
+                <header className="mb-10 text-center">
                     <h1 className="text-4xl font-black text-gray-900">My Orders</h1>
                     <p className="text-gray-500 mt-2">
                         Track and manage your recent orders
                     </p>
                 </header>
 
-                {/* Empty State */}
-                {orders.length === 0 ? (
+                {loading ? (
+                    <p className="text-center text-gray-400">Loading orders...</p>
+                ) : orders.length === 0 ? (
                     <div className="text-center py-24 bg-white rounded-3xl border-2 border-dashed border-gray-200">
                         <p className="text-gray-400 font-bold text-lg">
                             😔 No orders yet
@@ -74,7 +79,7 @@ export default function MyOrdersPage() {
                         </p>
                     </div>
                 ) : (
-                    <div className="space-y-6 ">
+                    <div className="space-y-6">
                         {orders.map((order) => {
                             const config = statusConfig[order.status];
                             const Icon = config.icon;
@@ -88,10 +93,10 @@ export default function MyOrdersPage() {
                                         {/* Left */}
                                         <div>
                                             <h2 className="text-xl font-bold text-gray-800">
-                                                Order #{order.id}
+                                                Order #{order.id.slice(0, 8)}
                                             </h2>
                                             <p className="text-gray-500 text-sm">
-                                                📅 {order.date}
+                                                📅 {new Date(order.createdAt).toLocaleString()}
                                             </p>
                                             <p className="text-gray-900 font-semibold mt-1">
                                                 💰 ৳ {order.total}
@@ -108,7 +113,7 @@ export default function MyOrdersPage() {
                                             </span>
 
                                             {/* Actions */}
-                                            {order.status === "PENDING" && (
+                                            {order.status === "PLACED" && (
                                                 <button className="text-red-500 font-semibold hover:underline">
                                                     Cancel
                                                 </button>

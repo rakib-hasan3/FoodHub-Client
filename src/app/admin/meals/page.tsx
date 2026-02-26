@@ -40,7 +40,7 @@ export default function MealsPage() {
 
     return (
         <div className="p-4 mb-8 md:p-6">
-            <h1 className="text-2xl font-bold mb-6">Meals Management 🍽️</h1>
+            <h1 className="text-xl text-center p-4 font-bold mb-6">Meals Management 🍽️</h1>
 
             <div className="bg-white rounded-xl shadow overflow-x-auto">
                 <table className="min-w-full w-full text-center text-sm">
@@ -157,7 +157,7 @@ function ManageMealModal({
                 <h2 className="text-xl text-center font-bold">Manage Meal</h2>
 
                 <div>
-                    <p className="text-sm text-gray-500">Meal</p>
+                    <p className="text-lg text-gray-500">Meal</p>
                     <p className="font-medium">{meal.name}</p>
                 </div>
 

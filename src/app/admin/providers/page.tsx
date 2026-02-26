@@ -78,35 +78,35 @@ export default function AdminProvidersDashboard() {
     if (loading) return <DashboardSkeleton />;
 
     return (
-        <div className="p-4 sm:p-8 space-y-8 max-w-7xl mx-auto text-gray-900">
-            <h1 className="text-3xl font-bold tracking-tight">Providers Overview</h1>
+        <div className="p-4 sm:p-4 mb- space-y-4 max-w-7xl mx-auto text-gray-900">
+            <h1 className="text-3xl text-center p-4 font-bold tracking-tight">Providers Overview</h1>
 
-            <div className="grid grid-cols-1 gap-8">
+            <div className="grid grid-cols-1 gap-4">
                 {providers.map((provider) => (
-                    <div key={provider.id} className="space-y-4">
+                    <div key={provider.id} className="space-y-2">
 
                         {/* Header Section */}
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-primary/5 p-6 rounded-2xl border border-primary/10 transition-all duration-300">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-primary rounded-xl shadow-md">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-primary/5 p-4 rounded-2xl border border-primary/10 transition-all duration-300">
+                            <div className="flex items-center gap-2">
+                                <div className="p-4 bg-primary rounded-xl shadow-md">
                                     <Store className="h-8 w-8 text-white" />
                                 </div>
                                 <div>
                                     <h2 className="text-2xl font-bold tracking-tight capitalize">{provider.restaurantName}</h2>
                                     <div className="flex flex-wrap gap-4 mt-1 text-sm text-muted-foreground">
-                                        <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {provider.address}</span>
+                                        <span className="flex items-center  gap-"><MapPin className="h-4  w-4" /> {provider.address}</span>
                                         <div
                                             onClick={() => handleCopy(provider.id)}
-                                            className="flex items-center gap-1.5 cursor-pointer hover:text-primary font-mono bg-white px-2 py-0.5 rounded border"
+                                            className="flex items-center gap-2  cursor-pointer hover:text-primary font-mono bg-white px-2 py-0.5 rounded border"
                                         >
-                                            {copiedId === provider.id ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5 text-gray-400" />}
+                                            {copiedId === provider.id ? <Check className="h-3.5  w-3.5  text-green-500" /> : <Copy className="h-3.5 w-3.5 text-gray-400" />}
                                             ID: {provider.id.slice(0, 8)}...
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 bg-white p-3 px-5 rounded-2xl border shadow-sm">
+                            <div className="flex items-center gap-3 bg-white p-4 px-5 rounded-2xl border shadow-sm">
                                 <span className={`text-xs font-black tracking-widest ${provider.is_active ? 'text-green-600' : 'text-red-500'}`}>
                                     {provider.is_active ? 'ACTIVE' : 'INACTIVE'}
                                 </span>
@@ -125,11 +125,11 @@ export default function AdminProvidersDashboard() {
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 p-4">
                             <StatCard title="Total Meals" value={provider.totalMeals} icon={<Utensils className="h-4 w-4 text-orange-500" />} description="Items in menu" />
                             <StatCard title="Total Orders" value={provider.totalOrders} icon={<ShoppingBag className="h-4 w-4 text-blue-500" />} description="Lifetime orders" />
                             <StatCard title="Active Orders" value={provider.activeOrders} icon={<Clock className="h-4 w-4 text-green-500" />} description="Processing now" />
-                            <StatCard title="Total Revenue" value={`৳ ${provider.totalRevenue.toLocaleString()}`} icon={<Banknote className="h-4 w-4 text-emerald-600" />} description="Net earnings" />
+                            <StatCard title="Total Revenue" value={`৳ ${provider.totalRevenue.toLocaleString()}`} icon={<Banknote className="h-4  w-4 text-emerald-600" />} description="Net earnings" />
                         </div>
                     </div>
                 ))}
@@ -141,7 +141,7 @@ export default function AdminProvidersDashboard() {
 
 function StatCard({ title, value, icon, description }: { title: string; value: string | number; icon: React.ReactNode; description: string; }) {
     return (
-        <Card className="shadow-none border-gray-100 bg-white hover:border-primary/20 transition-all">
+        <Card className="shadow-none p-4 border-gray-100 bg-white hover:border-primary/20 transition-all">
             <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{title}</CardTitle>
                 {icon}

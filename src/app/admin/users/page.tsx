@@ -34,14 +34,14 @@ export default function UsersPage() {
         return <div className="p-6 text-gray-500">Loading Users...</div>;
 
     return (
-        <div className="p-4  sm:p-6">
+        <div className="p-4 max-w-7xl sm:p-6">
             <h1 className="text-4xl text-center sm:text-2xl font-bold mb-8 sm:mb-6">
                 Users Management 👥
             </h1>
 
             {/* ✅ Desktop Table */}
             <div className="hidden mt-4 md:block lg:block  bg-white rounded-xl shadow overflow-x-auto">
-                <table className="min-w-full text-start w-full text-sm">
+                <table className=" text-start  text-sm">
                     <thead className="bg-gray-200 text-xl  w-full">
                         <tr>
                             <th className=" text-left">Name</th>

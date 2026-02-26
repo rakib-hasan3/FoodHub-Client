@@ -25,7 +25,7 @@ export default function Sidebar() {
             console.error("Signout error", err);
             // যদি এরর আসে, তবুও জোর করে বের করে দাও
             localStorage.clear();
-            window.location.replace("/login");
+            window.location.replace("/");
         }
 
         // ৪. মেমোরিতে থাকা কুকি ডিলিট করার ব্যাকআপ লুপ

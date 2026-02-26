@@ -43,8 +43,8 @@ export default function OrdersPage() {
         return <div className="p-6 text-gray-500">Loading Orders...</div>;
 
     return (
-        <div className="p-4 sm:p-6">
-            <h1 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">
+        <div className="p-4 sm:p-4">
+            <h1 className="text-xl text-center p-4 sm:text-2xl font-bold mb-4 sm:mb-6">
                 Orders Management 📦
             </h1>
 

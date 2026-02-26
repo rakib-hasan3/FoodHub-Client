@@ -37,10 +37,10 @@ export default function AboutPage() {
 
                 {/* Hero Section */}
                 <div className="text-center mb-16">
-                    <h1 className="text-5xl font-black text-gray-900 mb-4">
+                    <h1 className="text-xl font-bold font-black text-gray-900 mb-2">
                         About <span className="text-orange-500">FoodHub</span> 🍱
                     </h1>
-                    <p className="text-gray-600 text-lg max-w-2xl mx-auto font-medium">
+                    <p className="text-gray-600 mb-2 text-lg max-w-2xl mx-auto font-medium">
                         Discover & Order Delicious Meals - connecting food lovers with the best local providers.
                     </p>
                 </div>
@@ -68,15 +68,15 @@ export default function AboutPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {roles.map((role, index) => (
-                        <div key={index} className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                        <div key={index} className="bg-white rounded-[2.5rem] p-4 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
                             <div className={`w-16 h-16 rounded-2xl ${role.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                                 <role.icon size={30} />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-800 mb-4">{role.title}</h3>
-                            <p className="text-gray-500 leading-relaxed mb-6 text-sm">
+                            <h3 className="text-2xl font-bold  text-gray-800 mb-4">{role.title}</h3>
+                            <p className="text-gray-500 leading-relaxed mb-2 text-sm">
                                 {role.description}
                             </p>
-                            <ul className="space-y-3 border-t pt-6 border-gray-50">
+                            <ul className="space-y-2 border-t pt-2 border-gray-50">
                                 {role.features.map((feature, fIdx) => (
                                     <li key={fIdx} className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />

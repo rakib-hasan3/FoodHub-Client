@@ -72,7 +72,7 @@ const ProvidersPreview = () => {
 
                                 <Button
                                     className="mt-auto w-full bg-primary text-white"
-                                    onClick={() => router.push(`/restaurants/${provider.id}`)}
+                                    onClick={() => router.push(`/restaurants`)}
                                 >
                                     View Menu
                                 </Button>
