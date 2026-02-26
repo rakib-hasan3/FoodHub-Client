@@ -11,7 +11,6 @@ import {
 import toast from "react-hot-toast";
 
 const ProviderSidebar = () => {
-
     const providerId =
         typeof window !== "undefined"
             ? localStorage.getItem("providerId")
@@ -28,29 +27,33 @@ const ProviderSidebar = () => {
         {
             name: "Dashboard",
             icon: <LayoutDashboard size={20} />,
-            href: providerId ? `/provider/dashboard/${providerId}` : "#",
+            href: `/provider/dashboard`
         },
         {
             name: "My Meals",
             icon: <UtensilsCrossed size={20} />,
-            href: providerId ? `/provider/my-meals/${providerId}` : "#",
+            href: `/provider/my-meal`
         },
         {
             name: "Orders",
             icon: <ShoppingBag size={20} />,
-            href: providerId ? `/provider/orders/${providerId}` : "#",
+            href: `/provider/orders`
         },
         {
             name: "Settings",
             icon: <Settings size={20} />,
-            href: providerId ? `/provider/settings/${providerId}` : "#",
+            href: providerId
+                ? `/provider/settings/${providerId}`
+                : "#",
         },
     ];
 
     return (
         <div className="w-60 bg-white h-screen shadow-md flex flex-col">
             <div className="p-4 border-b">
-                <h1 className="text-xl font-bold text-primary">Provider Panel</h1>
+                <h1 className="text-xl font-bold text-primary">
+                    Provider Panel
+                </h1>
             </div>
 
             <nav className="flex-grow p-4">
