@@ -22,7 +22,7 @@ export default function MealsPage() {
     const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/meals", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals`, {
             credentials: "include",
         })
             .then((res) => res.json())

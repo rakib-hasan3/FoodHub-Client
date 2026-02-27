@@ -13,7 +13,7 @@ interface ProviderType {
 // ২. ডাটা ফেচ করার ফাংশন
 async function getProviders(): Promise<ProviderType[]> {
     try {
-        const res = await fetch("http://localhost:5000/api/provider/allproviders", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/allproviders`, {
             cache: "no-store",
         });
 

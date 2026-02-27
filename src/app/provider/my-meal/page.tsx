@@ -1,7 +1,7 @@
 "use client";
 
 import MealsGrid from "@/components/dashboard/MealsGrid";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../../../auth-client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -34,7 +34,7 @@ const MyMealsPage = () => {
                 setLoading(true);
 
                 const res = await fetch(
-                    `http://localhost:5000/api/meals/my-meals/${providerId}`,
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/meals/my-meals/${providerId}`,
                     { cache: "no-store" }
                 );
 

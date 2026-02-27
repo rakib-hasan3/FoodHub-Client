@@ -25,7 +25,7 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/admin/order-management/orders", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/order-management/orders`, {
             credentials: "include",
         })
             .then((res) => res.json())

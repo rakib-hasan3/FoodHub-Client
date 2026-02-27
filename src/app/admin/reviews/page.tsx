@@ -21,7 +21,7 @@ export default function ReviewsPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/reviews/admin/reviews", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/admin/reviews`, {
             credentials: "include",
         })
             .then(res => res.json())

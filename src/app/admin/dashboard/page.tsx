@@ -25,7 +25,7 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/admin/order-management/dashboard-stats", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/order-management/dashboard-stats`, {
             credentials: "include",
         })
             .then((res) => res.json())

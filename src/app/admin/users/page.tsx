@@ -16,7 +16,7 @@ export default function UsersPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/admin/user-management/users", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/user-management/users`, {
             credentials: "include",
         })
             .then((res) => res.json())

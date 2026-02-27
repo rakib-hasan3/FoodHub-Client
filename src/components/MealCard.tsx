@@ -2,7 +2,7 @@
 import { MapPin, Utensils, ShoppingCart, Star } from "lucide-react";
 import { useRouter } from "next/navigation"; // রাউটিং এর জন্য
 import { useCart } from "@/app/context/CartContext";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../auth-client";
 
 // export default function MealCard({ meal }: { meal: any }) {
 //     const { addToCart } = useCart();

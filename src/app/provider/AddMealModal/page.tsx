@@ -22,7 +22,7 @@ const AddMealPage = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/categories");
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`);
                 const data = await res.json();
                 if (data.success) setCategories(data.data);
             } catch (err) {
@@ -42,7 +42,7 @@ const AddMealPage = () => {
 
         try {
             const token = localStorage.getItem("session_token"); // যেটা login এ save
-            const res = await fetch("http://localhost:5000/api/meals/create", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

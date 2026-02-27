@@ -19,7 +19,7 @@ interface MealType {
 // ডাটা ফেচ করার ফাংশন
 async function getProviderMeals(id: string): Promise<MealType[]> {
     try {
-        const res = await fetch(`http://localhost:5000/api/meals/my-meals/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals/my-meals/${id}`, {
             cache: "no-store",
         });
 

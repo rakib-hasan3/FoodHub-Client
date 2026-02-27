@@ -1,5 +1,5 @@
 "use client"
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../../auth-client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

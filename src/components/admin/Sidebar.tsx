@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { adminMenu } from "@/config/adminMenu";
 import { LogOut } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../../auth-client";
 
 export default function Sidebar() {
 

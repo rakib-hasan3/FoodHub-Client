@@ -46,7 +46,7 @@ export default function AdminProvidersDashboard() {
         try {
             const newStatus = !currentStatus;
 
-            const response = await fetch(`http://localhost:5000/api/provider/update-status/${id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/update-status/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ is_active: newStatus }),

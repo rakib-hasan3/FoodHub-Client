@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../auth-client";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, User } from "lucide-react";
 import {

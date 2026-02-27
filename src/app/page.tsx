@@ -2,7 +2,7 @@ import Categories from "@/components/Categories";
 import FeaturedMeals from "@/components/FeaturedMeals";
 import Hero from "@/components/Hero";
 import ProvidersPreview from "@/components/ProvidersPreview";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../auth-client";
 
 
 export default async function Home() {

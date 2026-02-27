@@ -27,7 +27,7 @@ const FeaturedMeals = () => {
     useEffect(() => {
         const fetchMeals = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/meals");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals`);
                 const result = await response.json();
 
                 // ২. ডাটা সেট করার সময় result.data ব্যবহার করুন

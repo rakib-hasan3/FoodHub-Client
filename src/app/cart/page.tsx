@@ -41,7 +41,7 @@ export default function CartPage() {
                 delivery_address: deliveryAddress, // ✅ address পাঠাচ্ছি
             };
 
-            const res = await fetch("http://localhost:5000/api/orders", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

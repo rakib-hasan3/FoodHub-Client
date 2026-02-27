@@ -20,7 +20,7 @@ const ProvidersPreview = () => {
     useEffect(() => {
         const fetchProviders = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/provider/allproviders");
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/allproviders`);
                 const result = await response.json();
                 if (result.success && Array.isArray(result.data)) {
                     setProviders(result.data);

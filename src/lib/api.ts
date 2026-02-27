@@ -27,7 +27,7 @@ interface ProviderDashboardResponse {
 export async function getProviderDashboard(): Promise<ProviderStats> {
     const token = localStorage.getItem("accessToken") || "";
 
-    const res = await fetch("http://localhost:5000/api/provider/dashboard-stats", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/dashboard-stats`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },

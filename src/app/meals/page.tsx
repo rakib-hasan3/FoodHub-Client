@@ -17,7 +17,7 @@ interface MealType {
 
 async function getMeals(): Promise<MealType[]> {
     try {
-        const res = await fetch("http://localhost:5000/api/meals", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals`, {
             cache: "no-store",
         });
 

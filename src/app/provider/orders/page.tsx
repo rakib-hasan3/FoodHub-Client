@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "../../../../auth-client";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 

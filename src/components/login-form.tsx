@@ -16,7 +16,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { authClient } from "@/lib/auth-client" // আপনার পাথ অনুযায়ী চেক করুন
+import { authClient } from "../../auth-client" // আপনার পাথ অনুযায়ী চেক করুন
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
