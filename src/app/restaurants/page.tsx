@@ -1,5 +1,6 @@
 import { Store, MapPin, Star, Utensils, ArrowRight } from "lucide-react";
 import Link from "next/link";
+export const dynamic = "force-dynamic";
 
 // ১. টাইপ ডিফাইন করা
 interface ProviderType {

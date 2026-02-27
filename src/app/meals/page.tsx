@@ -1,5 +1,5 @@
 import MealCard from "@/components/MealCard";
-
+export const dynamic = "force-dynamic";
 interface MealType {
     id: string;
     name: string;
