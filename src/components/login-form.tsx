@@ -51,6 +51,9 @@ export function LoginForm({
         } else if (user?.role === "PROVIDER" || user?.role === "provider") {
           window.location.replace("/provider/dashboard");
         }
+        else if (user?.role === "USER" || user?.role === "user") {
+          window.location.replace("/"); // ইউজারের ড্যাশবোর্ড পাথ
+        }
         else {
           window.location.replace("/");
         }
@@ -66,7 +69,7 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-5 ", className)} {...props}>
       <Card className="">
         <CardHeader className="p-4">
-          <CardTitle className="text-4xl font-bold text-center">Login</CardTitle>
+          <CardTitle className="text-base font-bold text-center">Login</CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
@@ -75,7 +78,7 @@ export function LoginForm({
           <form onSubmit={handleLogin}> {/* ফাংশন কানেক্ট করা হয়েছে */}
             <FieldGroup>
               <Field>
-                <FieldLabel className="py-2 text-2xl" htmlFor="email">Email</FieldLabel>
+                <FieldLabel className="py-2 text-base" htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
