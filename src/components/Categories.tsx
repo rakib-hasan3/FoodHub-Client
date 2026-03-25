@@ -11,23 +11,29 @@ const categoriesData = [
 
 const Categories = () => {
     return (
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-slate-50">
             <div className="container mx-auto px-4">
-                <h2 className="text-3xl font-bold text-center mb-10">Explore Categories</h2>
+                <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
+                    Explore Categories
+                </h2>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
                     {categoriesData.map((cat) => (
-                        <div key={cat.id} className="bg-white rounded-lg shadow hover:shadow-lg p-4 flex flex-col items-center">
+                        <div
+                            key={cat.id}
+                            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col items-center"
+                        >
                             <Image
-                                style={{ height: 'auto' }}
                                 src={cat.img}
                                 alt={cat.name}
-                                width={120}
-                                height={120}
-
+                                width={100}
+                                height={100}
                                 className="rounded-full mb-2"
                             />
-                            <span className="font-medium text-gray-800">{cat.name}</span>
+
+                            <span className="font-medium text-gray-800">
+                                {cat.name}
+                            </span>
                         </div>
                     ))}
                 </div>

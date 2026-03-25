@@ -9,6 +9,9 @@ export interface ICartItem {
     price: string | number;
     description?: string;
     provider_id?: string;
+
+    userId: string;   // ✅ এটা add করো
+    quantity: number;
 }
 
 interface CartContextType {

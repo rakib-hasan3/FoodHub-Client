@@ -1,29 +1,26 @@
-"use client" // এটি অবশ্যই থাকতে হবে
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { authClient } from "../../auth-client" // আপনার পাথ অনুযায়ী চেক করুন
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "../../auth-client";
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,53 +29,55 @@ export function LoginForm({
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await authClient.signIn.email({
-      email,
-      password,
-      // callbackURL: "/", // এটি বন্ধ রাখাই ভালো যদি ম্যানুয়ালি হ্যান্ডেল করেন
-    }, {
-      onRequest: () => setLoading(true),
-      onSuccess: async (ctx) => {
-        setLoading(false);
-        const user = ctx.data.user;
+    await authClient.signIn.email(
+      { email, password },
+      {
+        onRequest: () => setLoading(true),
+        onSuccess: async (ctx) => {
+          setLoading(false);
+          const user = ctx.data.user;
+          console.log("Current User Role:", user?.role);
 
-        // রোল চেক করার আগে কনসোলে দেখে নিন আসলে কী আসছে
-        console.log("Current User Role:", user?.role);
-
-        if (user?.role === "ADMIN" || user?.role === "admin") {
-          // window.location.replace ব্যবহার করলে ব্রাউজার হিস্টোরি ক্লিন করে সরাসরি চলে যাবে
-          window.location.replace("/admin/dashboard");
-        } else if (user?.role === "PROVIDER" || user?.role === "provider") {
-          window.location.replace("/provider/dashboard");
-        }
-        else if (user?.role === "USER" || user?.role === "user") {
-          window.location.replace("/"); // ইউজারের ড্যাশবোর্ড পাথ
-        }
-        else {
-          window.location.replace("/");
-        }
-      },
-      onError: (ctx) => {
-        setLoading(false);
-        alert(ctx.error.message);
-      },
-    });
+          if (user?.role === "ADMIN" || user?.role === "admin") {
+            window.location.replace("/admin/dashboard");
+          } else if (user?.role === "PROVIDER" || user?.role === "provider") {
+            window.location.replace("/provider/dashboard");
+          } else {
+            window.location.replace("/");
+          }
+        },
+        onError: (ctx) => {
+          setLoading(false);
+          alert(ctx.error.message);
+        },
+      }
+    );
   };
 
   return (
-    <div className={cn("flex flex-col gap-5 ", className)} {...props}>
-      <Card className="">
-        <CardHeader className="p-4">
-          <CardTitle className="text-base font-bold text-center">Login</CardTitle>
-          <CardDescription>
+    <div
+      className={cn(
+        "flex flex-col gap-6 items-center justify-center min-h-[80vh]",
+        className
+      )}
+      {...props}
+    >
+      <Card className="w-full max-w-md rounded-3xl shadow-xl bg-white border border-orange-200">
+        <CardHeader className="p-6 text-center">
+          <CardTitle className="text-3xl font-extrabold text-gray-900">
+            Login
+          </CardTitle>
+          <CardDescription className="text-gray-600 mt-1">
             Enter your email below to login to your account
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin}> {/* ফাংশন কানেক্ট করা হয়েছে */}
+        <CardContent className="p-6">
+          <form onSubmit={handleLogin} className="flex flex-col gap-5">
             <FieldGroup>
               <Field>
-                <FieldLabel className="py-2 text-base" htmlFor="email">Email</FieldLabel>
+                <FieldLabel className="py-1 text-base font-medium" htmlFor="email">
+                  Email
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -86,11 +85,19 @@ export function LoginForm({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="border-orange-300 focus:ring-orange-400 focus:border-orange-400"
                 />
               </Field>
-              <Field className="py-2 text-2xl" >
-                <div className="flex items-center">
+
+              <Field className="pt-2">
+                <div className="flex items-center justify-between">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <a
+                    href="#"
+                    className="text-sm text-orange-500 hover:underline"
+                  >
+                    Forgot password?
+                  </a>
                 </div>
                 <Input
                   id="password"
@@ -98,34 +105,35 @@ export function LoginForm({
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="border-orange-300 focus:ring-orange-400 focus:border-orange-400"
                 />
-                <a
-                  href="#"
-                  className="ml-auto py-2 inline-block text-sm underline-offset-4 hover:underline"
-                >
-                  Forgot your password?
-                </a>
               </Field>
-              <Field className="py-2 text-2xl gap-2" >
+
+              <Field className="pt-4 flex flex-col gap-3">
                 <Button
                   type="submit"
-                  className="py-2 text-2xl"
+                  className="py-3 text-lg font-semibold bg-gradient-to-r from-orange-400 to-pink-500 hover:from-orange-500 hover:to-pink-600 text-white shadow-md transition-all"
                   disabled={loading}
                 >
                   {loading ? "Logging in..." : "Login"}
                 </Button>
+
                 <Button
-                  className="text-2xl"
-                  variant="outline"
                   type="button"
+                  variant="outline"
+                  className="py-3 text-lg font-semibold text-orange-500 border-orange-400 hover:bg-orange-50 transition-all"
                   onClick={async () => {
-                    await authClient.signIn.social({ provider: "google" })
+                    await authClient.signIn.social({ provider: "google" });
                   }}
                 >
                   Login with Google
                 </Button>
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="/signup" className="underline">Sign up</a>
+
+                <FieldDescription className="text-center text-gray-600 mt-2">
+                  Don&apos;t have an account?{" "}
+                  <a href="/signup" className="underline text-orange-500">
+                    Sign up
+                  </a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -133,5 +141,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

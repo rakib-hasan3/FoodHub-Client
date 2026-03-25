@@ -1,12 +1,12 @@
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/login-form";
 
 export default function Page() {
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      {/* এখানে w-full এবং max-w-md দিন যাতে কার্ডটা খুব ছোট না হয়ে যায় */}
+    <div className="min-h-screen flex items-center justify-center py-16 px-6 md:px-10 bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50">
+      {/* Card container */}
       <div className="w-full max-w-md flex flex-col gap-6">
         <LoginForm />
       </div>
     </div>
-  )
+  );
 }

@@ -1,73 +1,71 @@
 "use client";
 
 import toast from "react-hot-toast";
-import { useCart } from "../context/CartContext";
-import { useState } from "react";
-
-interface ICartItem {
-    id: string;          // mealId হিসেবে যাবে
-    name: string;
-    image_url: string;
-    price: string | number;
-    quantity?: number;
-}
+import { useCart, ICartItem } from "../context/CartContext";
+import { useState, useMemo } from "react";
+import { authClient } from "../../../auth-client";
 
 export default function CartPage() {
     const { cartItems, removeFromCart, clearCart } = useCart();
-    const [deliveryAddress, setDeliveryAddress] = useState(""); // ✅ delivery address state
+    const [deliveryAddress, setDeliveryAddress] = useState("");
 
-    const totalPrice = cartItems.reduce((acc: number, item: ICartItem) => {
-        const priceValue = parseFloat(String(item.price)) || 0;
-        return acc + priceValue;
+    const { data: session, isPending } = authClient.useSession();
+    const userId = session?.user?.id;
+
+    // ✅ Only current user cart দেখাবে
+    const userCartItems = useMemo(() => {
+        if (!userId) return [];
+        return cartItems.filter((item) => item.userId === userId);
+    }, [cartItems, userId]);
+
+    // ✅ total price with quantity
+    const totalPrice = userCartItems.reduce((acc, item) => {
+        const priceValue = Number(item.price) || 0;
+        return acc + priceValue * item.quantity;
     }, 0);
 
     const handleConfirmOrder = async () => {
+        if (!userId) {
+            toast.error("Please login first");
+            return;
+        }
+
+        if (userCartItems.length === 0) {
+            toast.error("Cart is empty");
+            return;
+        }
+
+        if (!deliveryAddress.trim()) {
+            toast.error("Delivery address required");
+            return;
+        }
+
         try {
-            if (cartItems.length === 0) {
-                toast.error("Cart is empty");
-                return;
-            }
-
-            if (!deliveryAddress.trim()) {
-                toast.error("Delivery address required");
-                return;
-            }
-
             const orderPayload = {
-                items: cartItems.map((item) => ({
+                items: userCartItems.map((item) => ({
                     mealId: item.id,
-                    quantity: 1,
+                    quantity: item.quantity,
                 })),
-                delivery_address: deliveryAddress, // ✅ address পাঠাচ্ছি
+                delivery_address: deliveryAddress,
             };
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(orderPayload),
-            });
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/orders`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(orderPayload),
+                }
+            );
 
             const data = await res.json();
 
             if (data.success) {
                 toast.success("🎉 Order confirmed!");
-                const existingOrders = JSON.parse(localStorage.getItem("myOrders") || "[]");
 
-                const newOrder = {
-                    id: data.data.id,
-                    createdAt: new Date().toISOString(),
-                    total: totalPrice,
-                    status: "PLACED",
-                };
-
-                localStorage.setItem(
-                    "myOrders",
-                    JSON.stringify([newOrder, ...existingOrders])
-                );
-
-                clearCart();
-                setDeliveryAddress(""); // reset input
+                clearCart(); // ✅ clear only UI
+                setDeliveryAddress("");
             } else {
                 toast.error(data.message || "Order failed");
             }
@@ -77,30 +75,52 @@ export default function CartPage() {
         }
     };
 
-    return (
-        <div className="max-w-7xl mx-auto mt-4 border rounded-lg p-4">
-            <h1 className="text-3xl font-bold mb-6">Your Cart Items</h1>
+    if (isPending) return <p className="p-6 text-center">Loading...</p>;
 
-            {cartItems.length === 0 ? (
-                <p>Your cart is empty.</p>
+    if (!session)
+        return (
+            <p className="p-6 text-center text-red-500 font-semibold">
+                Please login to view your cart
+            </p>
+        );
+
+    return (
+        <div className="max-w-5xl mx-auto mt-6 p-4">
+            <h1 className="text-3xl font-bold mb-6 text-center">
+                🛒 Your Cart Items
+            </h1>
+
+            {userCartItems.length === 0 ? (
+                <p className="text-center text-gray-500">Your cart is empty 😢</p>
             ) : (
                 <div className="space-y-4">
-                    {cartItems.map((item, index) => (
-                        <div key={`${item.id}-${index}`} className="border rounded-lg p-4">
-                            <h2 className="font-semibold">{item.name}</h2>
-                            <p>৳ {item.price}</p>
+                    {userCartItems.map((item: ICartItem) => (
+                        <div
+                            key={item.id}
+                            className="flex justify-between items-center bg-white p-4 rounded-xl shadow hover:shadow-md transition"
+                        >
+                            <div>
+                                <h2 className="font-semibold text-lg">{item.name}</h2>
+                                <p className="text-gray-600">৳ {item.price}</p>
+                                <p className="text-sm text-gray-500">
+                                    Quantity: {item.quantity}
+                                </p>
+                            </div>
+
                             <button
                                 onClick={() => removeFromCart(item.id)}
-                                className="text-red-500 text-sm mt-2"
+                                className="text-red-500 font-medium"
                             >
                                 Remove
                             </button>
                         </div>
                     ))}
 
-                    {/* Delivery Address Input */}
+                    {/* Delivery Address */}
                     <div className="mt-6">
-                        <label className="block font-semibold mb-2">Delivery Address:</label>
+                        <label className="block font-semibold mb-2">
+                            Delivery Address:
+                        </label>
                         <input
                             type="text"
                             placeholder="Enter your delivery address"
@@ -110,7 +130,8 @@ export default function CartPage() {
                         />
                     </div>
 
-                    <div className="mt-8 border-t pt-4">
+                    {/* Total */}
+                    <div className="mt-6 border-t pt-4">
                         <p className="text-xl font-bold">
                             Total: ৳ {totalPrice.toFixed(2)}
                         </p>
@@ -123,9 +144,9 @@ export default function CartPage() {
 
                         <button
                             onClick={handleConfirmOrder}
-                            className="w-full bg-orange-600 text-black py-3 rounded-xl mt-6 font-bold"
+                            className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 text-white py-3 rounded-xl mt-6 font-bold hover:opacity-90"
                         >
-                            Confirm Order
+                            Confirm Order 🚀
                         </button>
                     </div>
                 </div>

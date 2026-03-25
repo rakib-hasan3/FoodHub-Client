@@ -6,7 +6,8 @@ import {
     Store,
     UtensilsCrossed,
     ShoppingBag,
-    Star
+    Star,
+    LayoutGrid
 } from "lucide-react";
 
 export const adminMenu = [
@@ -15,5 +16,6 @@ export const adminMenu = [
     { label: "Providers", icon: Store, href: "/admin/providers" },
     { label: "Meals", icon: UtensilsCrossed, href: "/admin/meals" },
     { label: "Orders", icon: ShoppingBag, href: "/admin/orders" },
+    { label: "Categories", icon: LayoutGrid, href: "/admin/categories" },
     { label: "Reviews", icon: Star, href: "/admin/reviews" },
 ];

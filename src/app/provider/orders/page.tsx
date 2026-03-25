@@ -33,20 +33,19 @@ type Order = {
 };
 
 const OrdersPage = () => {
-    const { data: session, isPending } = authClient.useSession(); // ✅ session
+    const { data: session, isPending } = authClient.useSession();
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>("ALL");
 
-    const providerUserId = session?.user?.id; // ✅ primitive id
+    const providerUserId = session?.user?.id;
 
     useEffect(() => {
         const fetchOrders = async () => {
-            if (!providerUserId) return; // wait for session
-
+            if (!providerUserId) return;
             try {
                 setLoading(true);
-                const res = await fetch("http://localhost:5000/api/provider/orders", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/orders`, {
                     cache: "no-store",
                     credentials: "include",
                 });
@@ -71,14 +70,13 @@ const OrdersPage = () => {
         };
 
         fetchOrders();
-    }, [providerUserId]); // ✅ primitive dependency
+    }, [providerUserId]);
 
-    // Update order status
     const updateOrderStatus = async (orderId: string, newStatus: Order["status"]) => {
         if (!providerUserId) return;
         try {
             const res = await fetch(
-                `http://localhost:5000/api/provider/orders/${orderId}/status`,
+                `${process.env.NEXT_PUBLIC_API_URL}/api/provider/orders/${orderId}/status`,
                 {
                     method: "PATCH",
                     credentials: "include",
@@ -105,16 +103,20 @@ const OrdersPage = () => {
         filter === "ALL" ? orders : orders.filter((order) => order.status === filter);
 
     return (
-        <div className="p-4 space-y-6 flex flex-col items-center justify-center">
-            <h1 className="text-xl font-bold">Orders</h1>
+        <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
+
+            <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
 
             {/* Filters */}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 mb-4">
                 {["ALL", "PLACED", "PREPARING", "READY", "DELIVERED"].map((status) => (
                     <button
                         key={status}
                         onClick={() => setFilter(status)}
-                        className={`px-3 py-1 rounded-lg text-sm border ${filter === status ? "bg-gray-900 text-black" : "bg-white hover:bg-gray-300"
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition 
+                        ${filter === status
+                                ? "bg-blue-600 text-white shadow"
+                                : "bg-white text-gray-700 border hover:bg-gray-100"
                             }`}
                     >
                         {status}
@@ -124,24 +126,26 @@ const OrdersPage = () => {
 
             {/* Orders */}
             {loading ? (
-                <p>Loading orders...</p>
+                <p className="text-center text-gray-500 py-10">Loading orders...</p>
             ) : filteredOrders.length === 0 ? (
-                <p>No orders found 😢</p>
+                <p className="text-center text-gray-500 py-10">No orders found 😢</p>
             ) : (
-                <div className="grid grid-cols-2 w-full justify-center items-center md:grid-cols-2 xl:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredOrders.map((order) => (
                         <div
                             key={order.id}
-                            className="bg-white max-w-7xl p-4 rounded-lg shadow p-3 space-y-2 text-sm"
+                            className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition flex flex-col justify-between"
                         >
-                            <div className="flex justify-between  items-center">
-                                <h2 className="font-semibold text-sm truncate">
+                            {/* Order Header */}
+                            <div className="flex justify-between items-center mb-3">
+                                <h2 className="font-semibold text-gray-800 truncate text-sm">
                                     Order #{order.id.slice(0, 8)}
                                 </h2>
                                 <StatusBadge status={order.status} />
                             </div>
 
-                            <div className="text-gray-600">
+                            {/* Order Info */}
+                            <div className="text-gray-600 text-sm space-y-1 mb-3">
                                 <p>👤 {order.customer_name}</p>
                                 <p>🧾 Items: {order.itemsCount}</p>
                                 <p>💰 Total: ৳ {order.total}</p>
@@ -150,13 +154,13 @@ const OrdersPage = () => {
                                 </p>
                             </div>
 
-                            {/* Dropdown for status update */}
+                            {/* Status Dropdown */}
                             <select
                                 value={order.status}
                                 onChange={(e) =>
                                     updateOrderStatus(order.id, e.target.value as Order["status"])
                                 }
-                                className="w-full border rounded px-2 py-1 text-xs"
+                                className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:ring-1 focus:ring-blue-200 focus:border-blue-400"
                             >
                                 <option value="PLACED">PLACED</option>
                                 <option value="PREPARING">PREPARING</option>
@@ -173,14 +177,14 @@ const OrdersPage = () => {
 
 const StatusBadge = ({ status }: { status: Order["status"] }) => {
     const colors = {
-        PLACED: "bg-yellow-100 text-yellow-700",
-        PREPARING: "bg-blue-100 text-blue-700",
-        READY: "bg-purple-100 text-purple-700",
-        DELIVERED: "bg-green-100 text-green-700",
+        PLACED: "bg-yellow-100 text-yellow-800",
+        PREPARING: "bg-blue-100 text-blue-800",
+        READY: "bg-purple-100 text-purple-800",
+        DELIVERED: "bg-green-100 text-green-800",
     };
     return (
         <span
-            className={`text-xs px-2 py-0.5 rounded-md font-medium ${colors[status]}`}
+            className={`text-xs px-2 py-0.5 rounded-md font-semibold ${colors[status]}`}
         >
             {status}
         </span>

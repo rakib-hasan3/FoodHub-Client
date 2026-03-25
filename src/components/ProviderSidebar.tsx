@@ -5,42 +5,29 @@ import {
     LayoutDashboard,
     UtensilsCrossed,
     ShoppingBag,
-    Settings,
     LogOut,
+    User,
 } from "lucide-react";
-import toast from "react-hot-toast";
 import { authClient } from "../../auth-client";
 
-const ProviderSidebar = () => {
-    const providerId =
-        typeof window !== "undefined"
-            ? localStorage.getItem("providerId")
-            : null;
-
-
+const ProviderSidebar = ({ onClose }: { onClose?: () => void }) => {
     const handleLogout = async () => {
         try {
-            // ১. Better Auth-এর মাধ্যমে সেশন শেষ করা
             await authClient.signOut({
                 fetchOptions: {
                     onSuccess: () => {
-                        // ২. সেশন সাকসেসফুলি শেষ হলে সবকিছু ক্লিয়ার করা
                         localStorage.clear();
                         sessionStorage.clear();
-
-                        // ৩. লুপ বন্ধ করতে সরাসরি হার্ড রিডাইরেক্ট
                         window.location.replace("/");
                     }
                 }
             });
         } catch (err) {
             console.error("Signout error", err);
-            // যদি এরর আসে, তবুও জোর করে বের করে দাও
             localStorage.clear();
             window.location.replace("/login");
         }
 
-        // ৪. মেমোরিতে থাকা কুকি ডিলিট করার ব্যাকআপ লুপ
         const cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i];
@@ -67,45 +54,56 @@ const ProviderSidebar = () => {
             href: `/provider/orders`
         },
         {
-            name: "Settings",
-            icon: <Settings size={20} />,
-            href: providerId
-                ? `/provider/settings/${providerId}`
-                : "#",
+            name: "Profile",
+            icon: <User size={20} />,
+            href: `/provider/profile`
         },
     ];
 
     return (
-        <div className="w-60 bg-white h-screen shadow-md flex flex-col">
-            <div className="p-4 border-b">
-                <h1 className="text-xl font-bold text-primary">
+        <aside className="h-full flex flex-col bg-gradient-to-b from-white to-gray-50 border-r shadow-sm">
+
+            {/* Top */}
+            <div className="p-5 border-b">
+                <h1 className="text-xl font-extrabold bg-gradient-to-r from-orange-500 to-green-500 bg-clip-text text-transparent">
                     Provider Panel
                 </h1>
+                <p className="text-xs text-gray-400 mt-1">
+                    Manage your meals 🍽
+                </p>
             </div>
 
-            <nav className="flex-grow p-4">
+            {/* Menu */}
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                 {menuItems.map((item) => (
                     <Link
                         key={item.name}
                         href={item.href}
-                        className="flex items-center gap-3 p-3 text-gray-600 hover:bg-primary/10 hover:text-primary rounded-lg mb-2 transition"
+                        onClick={onClose} // 🔥 important
+                        className="group flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gradient-to-r hover:from-orange-100 hover:to-green-100 hover:text-gray-900 transition-all duration-300"
                     >
-                        {item.icon}
-                        <span>{item.name}</span>
+                        <span className="text-gray-500 group-hover:text-orange-500 transition">
+                            {item.icon}
+                        </span>
+
+                        <span className="font-medium">
+                            {item.name}
+                        </span>
                     </Link>
                 ))}
             </nav>
 
+            {/* Logout */}
             <div className="p-4 border-t">
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 p-3 text-red-500 hover:bg-red-50 w-full rounded-lg transition"
+                    className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all duration-300"
                 >
                     <LogOut size={20} />
-                    <span>Logout</span>
+                    <span className="font-medium">Logout</span>
                 </button>
             </div>
-        </div>
+        </aside>
     );
 };
 

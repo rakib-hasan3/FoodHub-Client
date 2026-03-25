@@ -46,18 +46,18 @@ export default function MealsPage() {
                 <table className="min-w-full w-full text-center text-sm">
                     <thead className="bg-gray-100">
                         <tr>
-                            <th className="py-3 px-4 text-left">Meal</th>
-                            <th className="py-3 px-4 text-left">Provider</th>
-                            <th className="py-3 px-4 text-left">Category</th>
-                            <th className="py-3 px-4 text-left">Price</th>
-                            <th className="py-3 px-4 text-left">Status</th>
-                            <th className="py-3 px-4 text-left">Action</th>
+                            <th className="py-3 px-4  ">Meal</th>
+                            <th className="py-3 px-4  ">Provider</th>
+                            <th className="py-3 px-4 ">Category</th>
+                            <th className="py-3 px-4 ">Price</th>
+                            <th className="py-3 px-4 ">Status</th>
+                            <th className="py-3 px-4 ">Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {meals.map((meal) => (
-                            <tr key={meal.id} className="border-b text-center">
+                            <tr key={meal.id} className="border-b text-center items-center">
                                 <td className="py-3 px-4 gap-4 text-center lg:mr-4 flex items-center ">
 
                                     <span> {meal.name} </span>
@@ -80,7 +80,7 @@ export default function MealsPage() {
                                 <td className="py-3 px-4">
                                     <button
                                         onClick={() => setSelectedMeal(meal)}
-                                        className="px-3 py-1 text-xs bg-black rounded"
+                                        className="px-3 py-1 text-xs bg-red-500 text-white font-bold rounded"
                                     >
                                         Manage
                                     </button>

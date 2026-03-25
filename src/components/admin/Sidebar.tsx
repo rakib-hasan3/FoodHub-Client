@@ -4,31 +4,29 @@ import { adminMenu } from "@/config/adminMenu";
 import { LogOut } from "lucide-react";
 import { authClient } from "../../../auth-client";
 
-export default function Sidebar() {
+type SidebarProps = {
+    onClose?: () => void;
+};
+
+export default function Sidebar({ onClose }: SidebarProps) {
 
     const handleLogout = async () => {
         try {
-            // ১. Better Auth-এর মাধ্যমে সেশন শেষ করা
             await authClient.signOut({
                 fetchOptions: {
                     onSuccess: () => {
-                        // ২. সেশন সাকসেসফুলি শেষ হলে সবকিছু ক্লিয়ার করা
                         localStorage.clear();
                         sessionStorage.clear();
-
-                        // ৩. লুপ বন্ধ করতে সরাসরি হার্ড রিডাইরেক্ট
                         window.location.replace("/login");
                     }
                 }
             });
         } catch (err) {
             console.error("Signout error", err);
-            // যদি এরর আসে, তবুও জোর করে বের করে দাও
             localStorage.clear();
             window.location.replace("/");
         }
 
-        // ৪. মেমোরিতে থাকা কুকি ডিলিট করার ব্যাকআপ লুপ
         const cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i];
@@ -39,36 +37,41 @@ export default function Sidebar() {
     };
 
     return (
-        <aside className="fixed p-4 pr-4 inset-y-0 left-0 w-96 bg-blue-300 text-black flex flex-col z-[50] border-r border-gray-800">
-            <h1 className="text-3xl mb-8 font-bold text-black">Admin Panel</h1>
+        <aside className="flex flex-col justify-between h-full w-64 bg-white p-4 text-black">
 
-            <nav className="space-y-2 flex-1 overflow-y-auto">
-                {adminMenu?.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            // prefetch={false} যোগ করা হয়েছে যাতে অটো-রিলোড লুপ না হয়
-                            prefetch={false}
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/20 text-gray-800 hover:text-black transition"
-                        >
-                            <Icon size={18} />
-                            <span className="font-medium">{item.label}</span>
-                        </Link>
-                    );
-                })}
-            </nav>
+            <div>
+                <h1 className="mb-8 text-2xl font-bold text-gray-900">Admin Panel</h1>
 
-            <div className="pt-5 border-t border-gray-500/30">
+                <nav className="space-y-2">
+                    {adminMenu?.map((item) => {
+                        const Icon = item.icon;
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                prefetch={false}
+                                onClick={() => onClose?.()} // 🔥 FIX
+                                className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition hover:bg-gray-100 hover:text-black"
+                            >
+                                <Icon size={18} />
+                                <span className="font-medium">{item.label}</span>
+                            </Link>
+                        );
+                    })}
+                </nav>
+            </div>
+
+            <div className="border-t border-gray-200 pt-5">
                 <button
                     onClick={handleLogout}
-                    className="flex items-center gap-3 px-3 py-2 w-full rounded-lg hover:bg-red-500/20 text-red-600 font-bold transition"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-bold text-red-600 hover:bg-red-50"
                 >
                     <LogOut size={18} />
                     Logout
                 </button>
             </div>
+
         </aside>
     );
 }

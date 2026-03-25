@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const EditProfilePage = () => {
     const { data: session } = authClient.useSession();
+
     const [name, setName] = useState(session?.user.name || "");
     const [loading, setLoading] = useState(false);
 
@@ -15,6 +16,9 @@ const EditProfilePage = () => {
 
             await fetch("/api/profile/update", {
                 method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({ name }),
             });
 
@@ -27,26 +31,50 @@ const EditProfilePage = () => {
     if (!session) return null;
 
     return (
-        <div className="w-full flex justify-center">
-            <div className="w-full  bg-white p-4 py-4 rounded-2xl shadow">
-                <h1 className="text-xl text-center font-semibold mb-4">Edit Profile</h1>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
 
-                <div className="mb-4">
-                    <label className="text-sm text-gray-500">Name</label>
+            {/* Card */}
+            <div className="w-full max-w-md bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-gray-100">
+
+                {/* Header */}
+                <div className="text-center mb-6">
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                        Edit Profile
+                    </h1>
+                    <p className="text-sm text-gray-500 mt-1">
+                        Update your personal information
+                    </p>
+                </div>
+
+                {/* Avatar */}
+                <div className="flex justify-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-orange-500 to-green-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                        {session.user.name?.charAt(0)}
+                    </div>
+                </div>
+
+                {/* Input */}
+                <div className="mb-5">
+                    <label className="text-sm font-medium text-gray-600">
+                        Full Name
+                    </label>
                     <input
-                        className="w-full mb-2 border rounded-lg p-4 mt-1"
+                        className="w-full mt-2 border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 outline-none rounded-xl p-3 transition"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter your name"
                     />
                 </div>
 
+                {/* Button */}
                 <Button
-                    className="w-full"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-xl py-3 font-semibold transition active:scale-95"
                     onClick={handleUpdate}
                     disabled={loading}
                 >
-                    {loading ? "Updating..." : "Update Name"}
+                    {loading ? "Updating..." : "Save Changes"}
                 </Button>
+
             </div>
         </div>
     );

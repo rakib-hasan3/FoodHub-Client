@@ -56,7 +56,7 @@ const AddMealPage = () => {
 
             if (data.success) {
                 alert("Meal added successfully!");
-                router.push(`/provider/dashboard?refresh=${Date.now()}`);
+                router.push(`/provider/my-meal?refresh=${Date.now()}`);
             } else {
                 alert("Failed to add meal: " + data.message);
             }
