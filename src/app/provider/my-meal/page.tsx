@@ -1,75 +1,56 @@
-"use client";
+import { authClient } from "@/lib/auth";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
+import React from "react";
+import ProviderMealManager from "@/components/provider/ProviderMealManager";
 
-import MealsGrid from "@/components/dashboard/MealsGrid";
-import { authClient } from "../../../../auth-client";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+async function getMeals(providerId: string) {
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("accessToken")?.value;
 
-type Meal = {
-    id: string;
-    name: string;
-    status: string;
-    price: string;
-    description: string;
-    image_url: string;
-    category: {
-        id: string;
-        name: string;
-    };
-};
+        const reqHeaders = new Headers();
+        const cookieHeader = (await headers()).get("cookie");
+        if (cookieHeader) reqHeaders.set("cookie", cookieHeader);
+        if (token) reqHeaders.set("Authorization", `Bearer ${token}`);
 
-const MyMealsPage = () => {
-    const [meals, setMeals] = useState<Meal[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    const router = useRouter();
-    const { data: session, isPending } = authClient.useSession();
-    const providerId = session?.user?.id;
-
-    useEffect(() => {
-        const fetchMeals = async () => {
-            if (!providerId) return;
-
-            try {
-                setLoading(true);
-
-                const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/meals/my-meals/${providerId}`,
-                    { cache: "no-store" }
-                );
-
-                const data = await res.json();
-
-                if (data.success) {
-                    setMeals(data.data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch meals", error);
-            } finally {
-                setLoading(false);
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/meals/my-meals/${providerId}`,
+            { 
+                headers: reqHeaders,
+                next: { revalidate: 30 } 
             }
-        };
+        );
+        const data = await res.json();
+        if (data.success) {
+            return data.data;
+        }
+        return [];
+    } catch (error) {
+        console.error("Failed to fetch meals", error);
+        return [];
+    }
+}
 
-        if (!isPending) fetchMeals();
-    }, [providerId, isPending]);
+export default async function MyMealsPage() {
+    const session = await authClient.getSession({
+        fetchOptions: {
+            headers: await headers(),
+            credentials: "include",
+        },
+    });
+
+    const userRole = (session?.data?.user as any)?.role?.toUpperCase();
+    if (session?.data && userRole && userRole !== "PROVIDER") {
+        redirect("/");
+    }
+
+    const providerId = session?.data?.user?.id;
+    const meals = providerId ? await getMeals(providerId) : [];
 
     return (
-        <div className="p-6 space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-xl font-bold">My Meals</h1>
-
-                <button
-                    onClick={() => router.push("/provider/AddMealModal")}
-                    className="px-4 py-2 bg-black text-white rounded-xl"
-                >
-                    + Add Meal
-                </button>
-            </div>
-
-            <MealsGrid meals={meals} loading={loading} />
+        <div className="p-4 md:p-8 lg:p-12 max-w-7xl mx-auto">
+            <ProviderMealManager initialMeals={meals} type="all" />
         </div>
     );
-};
-
-export default MyMealsPage;
+}

@@ -1,76 +1,48 @@
-"use client";
+import { authClient } from "@/lib/auth";
+import { headers, cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import ReviewListManager from "@/components/admin/ReviewListManager";
 
-import { useEffect, useState } from "react";
-import AdminLayout from "@/app/admin/layout";
+async function getReviews() {
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("accessToken")?.value;
 
-type Review = {
-    id: string;
-    rating: number;
-    comment: string;
-    user: {
-        name: string;
-    };
-    meal: {
-        name: string;
-    };
-    createdAt?: string;
-};
+        const reqHeaders = new Headers();
+        const cookieHeader = (await headers()).get("cookie");
+        if (cookieHeader) reqHeaders.set("cookie", cookieHeader);
+        if (token) reqHeaders.set("Authorization", `Bearer ${token}`);
 
-export default function ReviewsPage() {
-    const [reviews, setReviews] = useState<Review[]>([]);
-    const [loading, setLoading] = useState(true);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/admin/reviews`, {
+            headers: reqHeaders,
+            next: { revalidate: 30 },
+        });
+        const data = await res.json();
+        return data.reviews || [];
+    } catch (err) {
+        console.error(err);
+        return [];
+    }
+}
 
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews/admin/reviews`, {
+export default async function ReviewsPage() {
+    const session = await authClient.getSession({
+        fetchOptions: {
+            headers: await headers(),
             credentials: "include",
-        })
-            .then(res => res.json())
-            .then(data => {
-                setReviews(data.reviews);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, []);
+        },
+    });
 
-    if (loading) return <div className="p-6">Loading Reviews...</div>;
+    const userRole = (session?.data?.user as any)?.role?.toUpperCase();
+    if (session?.data && userRole && userRole !== "ADMIN") {
+        redirect("/");
+    }
+
+    const reviews = session?.data ? await getReviews() : [];
 
     return (
-        <div>
-            <h1 className="text-3xl text-center mb-2 font-bold mb-6 text-slate-800">Reviews</h1>
-
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 space-y-4 p-6">
-                {reviews && reviews.length > 0 ? (
-                    reviews.map(review => (
-                        <div key={review.id} className="border border-slate-100 rounded-lg p-4 hover:bg-slate-50 transition-colors">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    {/* এখানে ?.name ব্যবহার করা হয়েছে */}
-                                    <p className="font-semibold text-slate-900">{review.user?.name || "Anonymous User"}</p>
-                                    {/* এখানেও ?.name */}
-                                    <p className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded mt-1 inline-block">
-                                        {review.meal?.name || "Unknown Meal"}
-                                    </p>
-                                </div>
-                                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded">
-                                    <span className="text-yellow-500 text-xs mr-1">⭐</span>
-                                    <span className="text-sm font-bold text-yellow-700">{review.rating}</span>
-                                </div>
-                            </div>
-                            <p className="text-sm text-slate-600 mt-3 italic">{review.comment}</p>
-                            <p className="text-[10px] text-slate-400 mt-2">
-                                {review.createdAt ? new Date(review.createdAt).toLocaleDateString() : ""}
-                            </p>
-                        </div>
-                    ))
-                ) : (
-                    <div className="text-center py-10 text-slate-400 italic">
-                        No reviews found yet.
-                    </div>
-                )}
-            </div>
+        <div className="space-y-10 max-w-[1400px] mx-auto pb-10">
+            <ReviewListManager initialReviews={reviews} />
         </div>
     );
 }

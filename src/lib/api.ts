@@ -27,11 +27,15 @@ interface ProviderDashboardResponse {
 export async function getProviderDashboard(): Promise<ProviderStats> {
     const token = localStorage.getItem("accessToken") || "";
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/dashboard-stats`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    const res = await fetch(
+        `/api/provider/dashboard-stats`,
+        {
+            credentials: "include",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
 
     if (!res.ok) {
         throw new Error("Failed to fetch provider dashboard data");

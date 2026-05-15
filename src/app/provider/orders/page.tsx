@@ -1,8 +1,7 @@
-"use client";
-
-import { authClient } from "../../../../auth-client";
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
+import OrderManager from "@/components/provider/OrderManager";
 
 // API response type
 type ApiOrderItem = {
@@ -22,173 +21,99 @@ type ApiOrderItem = {
     customer: { name: string; email: string };
 };
 
-// UI Order type
+// Grouped UI Order type
 type Order = {
     id: string;
     customer_name: string;
+    customer_email: string;
+    delivery_address: string;
     status: "PLACED" | "PREPARING" | "READY" | "DELIVERED";
     total: number;
-    itemsCount: number;
+    items: { name: string; quantity: number; price: string }[];
     createdAt: string;
 };
 
-const OrdersPage = () => {
-    const { data: session, isPending } = authClient.useSession();
-    const [orders, setOrders] = useState<Order[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<string>("ALL");
+async function getOrders() {
+    try {
+        const cookieStore = await cookies();
+        const token = cookieStore.get("accessToken")?.value;
 
-    const providerUserId = session?.user?.id;
+        const reqHeaders = new Headers();
+        const cookieHeader = (await headers()).get("cookie");
+        if (cookieHeader) reqHeaders.set("cookie", cookieHeader);
+        if (token) reqHeaders.set("Authorization", `Bearer ${token}`);
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            if (!providerUserId) return;
-            try {
-                setLoading(true);
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/provider/orders`, {
-                    cache: "no-store",
-                    credentials: "include",
-                });
-                const data: { success: boolean; data: ApiOrderItem[] } = await res.json();
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/provider/orders`,
+            { 
+                next: { revalidate: 30 }, 
+                headers: reqHeaders
+            }
+        );
+        const data = await res.json();
 
-                if (data.success) {
-                    const formattedOrders: Order[] = data.data.map((item) => ({
-                        id: item.orders.id,
-                        customer_name: item.customer.name,
+        if (data.success && Array.isArray(data.data)) {
+            // ✅ Group multiple items belonging to the same order
+            const orderMap = new Map<string, Order>();
+
+            data.data.forEach((item: ApiOrderItem) => {
+                const orderId = item.orders.id;
+                if (!orderMap.has(orderId)) {
+                    orderMap.set(orderId, {
+                        id: orderId,
+                        customer_name: item.customer?.name ?? "Unknown",
+                        customer_email: item.customer?.email ?? "",
+                        delivery_address: item.orders.delivery_address,
                         status: item.orders.status,
                         total: Number(item.orders.total_price),
-                        itemsCount: item.quantity,
+                        items: [],
                         createdAt: item.orders.created_at,
-                    }));
-                    setOrders(formattedOrders);
+                    });
                 }
-            } catch (error) {
-                console.error("Failed to fetch orders", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+                orderMap.get(orderId)!.items.push({
+                    name: item.meal?.name ?? "Unknown Meal",
+                    quantity: item.quantity,
+                    price: item.price_at_order,
+                });
+            });
 
-        fetchOrders();
-    }, [providerUserId]);
-
-    const updateOrderStatus = async (orderId: string, newStatus: Order["status"]) => {
-        if (!providerUserId) return;
-        try {
-            const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/api/provider/orders/${orderId}/status`,
-                {
-                    method: "PATCH",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ status: newStatus, providerUserId }),
-                }
-            );
-            const data = await res.json();
-            if (data.success) {
-                toast.success("Status updated!");
-                setOrders((prev) =>
-                    prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-                );
-            } else {
-                toast.error("Failed to update status");
-            }
-        } catch (err) {
-            console.error("Backend error:", err);
-            toast.error("Error updating status");
+            return Array.from(orderMap.values());
         }
-    };
+        return [];
+    } catch (error) {
+        console.error("Failed to fetch orders", error);
+        return [];
+    }
+}
 
-    const filteredOrders =
-        filter === "ALL" ? orders : orders.filter((order) => order.status === filter);
+export default async function OrdersPage() {
+    const session = await authClient.getSession({
+        fetchOptions: {
+            headers: await headers(),
+            credentials: "include",
+        },
+    });
+
+    const userRole = (session?.data?.user as any)?.role?.toUpperCase();
+    if (session?.data && userRole && userRole !== "PROVIDER") {
+        redirect("/");
+    }
+
+    const orders = session?.data ? await getOrders() : [];
 
     return (
-        <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto">
-
-            <h1 className="text-2xl font-bold text-gray-800">Orders</h1>
-
-            {/* Filters */}
-            <div className="flex flex-wrap gap-2 mb-4">
-                {["ALL", "PLACED", "PREPARING", "READY", "DELIVERED"].map((status) => (
-                    <button
-                        key={status}
-                        onClick={() => setFilter(status)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition 
-                        ${filter === status
-                                ? "bg-blue-600 text-white shadow"
-                                : "bg-white text-gray-700 border hover:bg-gray-100"
-                            }`}
-                    >
-                        {status}
-                    </button>
-                ))}
+        <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
+            {/* Header */}
+            <div>
+                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
+                    Incoming Orders
+                </h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                    Manage and update the status of your customer orders
+                </p>
             </div>
 
-            {/* Orders */}
-            {loading ? (
-                <p className="text-center text-gray-500 py-10">Loading orders...</p>
-            ) : filteredOrders.length === 0 ? (
-                <p className="text-center text-gray-500 py-10">No orders found 😢</p>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {filteredOrders.map((order) => (
-                        <div
-                            key={order.id}
-                            className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition flex flex-col justify-between"
-                        >
-                            {/* Order Header */}
-                            <div className="flex justify-between items-center mb-3">
-                                <h2 className="font-semibold text-gray-800 truncate text-sm">
-                                    Order #{order.id.slice(0, 8)}
-                                </h2>
-                                <StatusBadge status={order.status} />
-                            </div>
-
-                            {/* Order Info */}
-                            <div className="text-gray-600 text-sm space-y-1 mb-3">
-                                <p>👤 {order.customer_name}</p>
-                                <p>🧾 Items: {order.itemsCount}</p>
-                                <p>💰 Total: ৳ {order.total}</p>
-                                <p className="text-xs text-gray-400">
-                                    {new Date(order.createdAt).toLocaleString()}
-                                </p>
-                            </div>
-
-                            {/* Status Dropdown */}
-                            <select
-                                value={order.status}
-                                onChange={(e) =>
-                                    updateOrderStatus(order.id, e.target.value as Order["status"])
-                                }
-                                className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:ring-1 focus:ring-blue-200 focus:border-blue-400"
-                            >
-                                <option value="PLACED">PLACED</option>
-                                <option value="PREPARING">PREPARING</option>
-                                <option value="READY">READY</option>
-                                <option value="DELIVERED">DELIVERED</option>
-                            </select>
-                        </div>
-                    ))}
-                </div>
-            )}
+            <OrderManager initialOrders={orders} />
         </div>
     );
-};
-
-const StatusBadge = ({ status }: { status: Order["status"] }) => {
-    const colors = {
-        PLACED: "bg-yellow-100 text-yellow-800",
-        PREPARING: "bg-blue-100 text-blue-800",
-        READY: "bg-purple-100 text-purple-800",
-        DELIVERED: "bg-green-100 text-green-800",
-    };
-    return (
-        <span
-            className={`text-xs px-2 py-0.5 rounded-md font-semibold ${colors[status]}`}
-        >
-            {status}
-        </span>
-    );
-};
-
-export default OrdersPage;
+}

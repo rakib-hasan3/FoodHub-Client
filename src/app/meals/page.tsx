@@ -1,11 +1,19 @@
-import MealCard from "@/components/MealCard";
-export const dynamic = "force-dynamic";
+import MealsClient from "@/components/MealsClient";
+
+export const revalidate = 60;
+
 interface MealType {
     id: string;
     name: string;
     image_url: string;
     description: string;
-    price: string;
+    price: string | number;
+    featured?: boolean;
+    trending?: boolean;
+    preparationTime?: string;
+    calories?: number | string;
+    spiceLevel?: string;
+    isAvailable?: boolean;
     provider: {
         restaurant_name: string;
         address: string;
@@ -17,11 +25,20 @@ interface MealType {
 
 async function getMeals(): Promise<MealType[]> {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals`, {
-            cache: "no-store",
+        let apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000";
+        // Convert localhost to 127.0.0.1 for server-side stability in Node.js
+        apiUrl = apiUrl.replace("localhost", "127.0.0.1");
+        
+        const res = await fetch(`${apiUrl}/api/meals`, {
+            next: { revalidate: 60 },
         });
 
-        if (!res.ok) throw new Error("Failed to fetch meals");
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error(`Fetch failed with status ${res.status}: ${errorText}`);
+            throw new Error(`Failed to fetch meals: ${res.status}`);
+        }
 
         const result = await res.json();
 
@@ -36,41 +53,38 @@ async function getMeals(): Promise<MealType[]> {
     }
 }
 
-export default async function MealsPage() {
+type Props = {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function MealsPage({ searchParams }: Props) {
     const meals = await getMeals();
+    const params = await searchParams;
+    const initialCategory = typeof params?.category === 'string' ? params.category : undefined;
 
     return (
-        <main className="min-h-screen mt-4  bg-gray-50/50 py-12">
-            {/* px-4 ভ্যালুটা এখানে ঠিক করে দিলাম */}
-            <div className="mx-auto  max-w-7xl px-4">
+        <main className="min-h-screen bg-white dark:bg-black py-12 relative overflow-hidden">
+            {/* Premium Background Decorations */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-[120px] animate-pulse" />
+                <div className="absolute bottom-[20%] right-[-10%] w-[50%] h-[50%] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[150px]" />
+            </div>
 
-                <header className="mb-12  text-center">
-                    <h1 className="text-4xl font-bold font-black text-gray-900 tracking-tight">
-                        Our <span className="text-orange-500">Meals</span> 🍱
+            <div className="mx-auto max-w-7xl px-4 relative z-10">
+                <header className="mb-12 text-center pt-8">
+                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 text-sm font-bold tracking-wide">
+                        <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                        Fresh & Hot
+                    </div>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
+                        Explore Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">Menu</span>
                     </h1>
-                    <div className="h-1 w-20 bg-orange-500 mx-auto mt-4 rounded-full"></div>
+                    <p className="mt-4 text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto text-lg font-medium">
+                        Browse through our carefully curated categories and discover your next favorite meal.
+                    </p>
                 </header>
 
-                {meals.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-3xl border">
-                        <p className="text-gray-400 font-bold">কোনো ডাটা পাওয়া যায়নি!</p>
-                    </div>
-                ) : (
-                    /* আমরা এখানে একদম Raw CSS ব্যবহার করছি যাতে ক্লাস কাজ না করলেও গ্রিড কাজ করে */
-                    <div
-                        className="grid gap-8 w-full"
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                        }}
-                    >
-                        {meals.map((meal: MealType, index) => (
-                            <div key={meal.id} className="flex justify-center w-full">
-                                <MealCard key={`${meal.id}-${index}`} meal={meal} />
-                            </div>
-                        ))}
-                    </div>
-                )}
+                <MealsClient meals={meals} initialCategory={initialCategory} />
             </div>
         </main>
     );

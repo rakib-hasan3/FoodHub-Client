@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation" // রিডাইরেক্টের জন্য
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -38,12 +39,11 @@ export function SignupForm() {
     setLoading(true)
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/sign-up/email`, {
+      const res = await fetch(`/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
@@ -70,41 +70,42 @@ export function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-md p-4 shadow-xl">
-      <CardHeader className="text-center space-y-2">
-        <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Choose how you want to use the platform
+    <Card className="w-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-[2rem] overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 via-transparent to-pink-500/10 pointer-events-none" />
+      
+      <CardHeader className="p-8 text-center relative z-10">
+        <CardTitle className="text-4xl font-black tracking-tight text-white">Join FoodHub</CardTitle>
+        <p className="text-gray-300 mt-2 text-balance">
+          Choose how you want to experience the platform
         </p>
       </CardHeader>
 
-      <CardContent className="space-y-5">
+      <CardContent className="p-8 pt-0 relative z-10 space-y-6">
         {/* ROLE SELECT */}
-        <div className="space-y-2">
-          <Label>I want to</Label>
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-gray-200 ml-1">I want to...</Label>
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-4">
             {/* USER */}
             <button
               type="button"
               onClick={() => setRole("USER")}
               className={clsx(
-                "rounded-xl border p-4 transition-all flex flex-col items-center gap-2",
+                "rounded-2xl border p-4 transition-all flex flex-col items-center gap-2 group relative overflow-hidden",
                 role === "USER"
-                  ? "border-orange-500 bg-orange-50 ring-2 ring-orange-500"
-                  : "border-muted hover:border-orange-400 hover:bg-orange-50/50"
+                  ? "border-orange-500 bg-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                  : "border-white/10 bg-white/5 hover:border-orange-500/50 hover:bg-white/10"
               )}
             >
-              <User
-                className={clsx(
-                  "h-7 w-7",
-                  role === "USER" ? "text-orange-500" : "text-muted-foreground"
-                )}
-              />
-              <span className={clsx("font-semibold", role === "USER" ? "text-orange-600" : "text-foreground")}>
+              <div className={clsx(
+                "p-3 rounded-xl transition-colors",
+                role === "USER" ? "bg-orange-500 text-white" : "bg-white/5 text-gray-400 group-hover:text-orange-400"
+              )}>
+                <User className="h-6 w-6" />
+              </div>
+              <span className={clsx("font-bold text-sm", role === "USER" ? "text-white" : "text-gray-300")}>
                 Order Food
               </span>
-              <span className="text-xs text-muted-foreground">I am a USER</span>
             </button>
 
             {/* PROVIDER */}
@@ -112,22 +113,21 @@ export function SignupForm() {
               type="button"
               onClick={() => setRole("PROVIDER")}
               className={clsx(
-                "rounded-xl border p-4 transition-all flex flex-col items-center gap-2",
+                "rounded-2xl border p-4 transition-all flex flex-col items-center gap-2 group relative overflow-hidden",
                 role === "PROVIDER"
-                  ? "border-orange-500 bg-orange-50 ring-2 ring-orange-500"
-                  : "border-muted hover:border-orange-400 hover:bg-orange-50/50"
+                  ? "border-orange-500 bg-orange-500/20 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                  : "border-white/10 bg-white/5 hover:border-orange-500/50 hover:bg-white/10"
               )}
             >
-              <Store
-                className={clsx(
-                  "h-7 w-7",
-                  role === "PROVIDER" ? "text-orange-500" : "text-muted-foreground"
-                )}
-              />
-              <span className={clsx("font-semibold", role === "PROVIDER" ? "text-orange-600" : "text-foreground")}>
+              <div className={clsx(
+                "p-3 rounded-xl transition-colors",
+                role === "PROVIDER" ? "bg-orange-500 text-white" : "bg-white/5 text-gray-400 group-hover:text-orange-400"
+              )}>
+                <Store className="h-6 w-6" />
+              </div>
+              <span className={clsx("font-bold text-sm", role === "PROVIDER" ? "text-white" : "text-gray-300")}>
                 Sell Food
               </span>
-              <span className="text-xs text-muted-foreground">I am a provider</span>
             </button>
           </div>
         </div>
@@ -135,70 +135,76 @@ export function SignupForm() {
         {/* FORM */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label>Full Name</Label>
+            <Label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Full Name</Label>
             <Input
               placeholder="John Doe"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Email</Label>
+            <Label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Email</Label>
             <Input
               type="email"
               placeholder="name@example.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Password</Label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Password</Label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                className="h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label>Confirm Password</Label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-            />
+            <div className="space-y-2">
+              <Label className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Confirm</Label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                className="h-12 bg-white/5 border-white/10 text-white placeholder:text-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500 transition-all"
+              />
+            </div>
           </div>
         </div>
 
-        {/* SUBMIT - লোডিং স্টেট যোগ করা হয়েছে */}
         <Button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full mt-2 h-11 text-white mb-2  hover:bg-orange-600"
+          className="w-full h-12 text-lg font-bold bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 text-white rounded-xl shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_25px_rgba(249,115,22,0.4)] transition-all duration-300 active:scale-[0.98] mt-4"
         >
           {loading ? (
             <span className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 font-bold animate-spin" /> Creating...
+              <Loader2 className="h-5 w-5 animate-spin" /> Creating Account...
             </span>
           ) : (
-            "Create Account →"
+            "Create Account"
           )}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-gray-400 mt-4 text-sm">
           Already have an account?{" "}
-          <span
-            onClick={() => router.push("/login")}
-            className="text-black font-medium cursor-pointer hover:underline"
+          <Link
+            href="/login"
+            className="text-orange-400 font-bold cursor-pointer hover:underline"
           >
             Sign in
-          </span>
+          </Link>
         </p>
       </CardContent>
     </Card>
+
   )
 }

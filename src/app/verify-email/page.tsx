@@ -1,6 +1,6 @@
 "use client"
 
-import { authClient } from "../../../auth-client";
+import { authClient } from "@/auth-client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 
@@ -21,7 +21,7 @@ function VerifyEmailContent() {
                     setStatus("Email verification successful. Please login here!");
                     setTimeout(() => router.push("/login"), 3000);
                 },
-                onError: (ctx) => {
+                onError: (ctx: any) => {
                     setStatus("False token or another error: " + ctx.error.message);
                 }
             });

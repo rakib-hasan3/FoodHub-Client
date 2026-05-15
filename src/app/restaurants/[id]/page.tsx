@@ -20,7 +20,7 @@ interface MealType {
 async function getProviderMeals(id: string): Promise<MealType[]> {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/meals/my-meals/${id}`, {
-            cache: "no-store",
+            next: { revalidate: 60 },
         });
 
         if (!res.ok) throw new Error("Failed to fetch provider meals");

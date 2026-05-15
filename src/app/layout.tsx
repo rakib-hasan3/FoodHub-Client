@@ -1,12 +1,13 @@
-// src/app/layout.tsx
-import ClientLayout from "@/components/ClientLayout"; // পাথ চেক করুন
+import { ThemeProvider } from "@/app/context/ThemeProvider";
+import ClientLayout from "@/components/ClientLayout";
 import "./globals.css";
 import { Metadata } from "next";
-import { Toaster } from "react-hot-toast";
+import { Toaster as SonnerToaster } from "sonner";
+import { Toaster as HotToaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-  title: "Your App Name",
-  description: "Food delivery app",
+  title: "FoodHub",
+  description: "Premium Food Delivery",
 };
 
 export default function RootLayout({
@@ -15,13 +16,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true}>
-        {/* সব ক্লায়েন্ট লজিক এখন ClientLayout এর ভেতরে */}
-        <ClientLayout>
-          {children}
-          <Toaster position="top-right" />
-        </ClientLayout>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning={true} className="[scrollbar-gutter:stable]">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ClientLayout>
+            {children}
+            <SonnerToaster position="top-center" richColors />
+            <HotToaster position="top-right" reverseOrder={false} />
+          </ClientLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
