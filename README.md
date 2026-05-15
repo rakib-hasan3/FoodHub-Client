@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍔 FoodHub - The Ultimate Food Delivery & Management Platform (Client)
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)
 
-First, run the development server:
+Welcome to the **FoodHub Client Repository**! FoodHub is a comprehensive, modern, and highly interactive food delivery and restaurant management platform. It offers dedicated portals for End Users, Food Providers (Restaurants), and Platform Administrators, all wrapped in a premium, responsive UI.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔗 Important Links
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **🌍 Live Application:** [FoodHub Live](https://foodhub-client-gamma.vercel.app)
+- **⚙️ Backend Repository:** [FoodHub Server](https://github.com/rakib-hasan3/FoodHub-Server)
+- **👨‍💻 Developer Portfolio:** [Rakib Hasan](https://rakibhasan-dev.vercel.app)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Key Features
 
-## Learn More
+- **Role-Based Dashboards:** Unique, secure routing and dashboards tailored for **Admins**, **Providers**, and **Users**.
+- **Modern & Responsive UI:** Built with **Tailwind CSS v4** and **Shadcn UI** for a beautiful, accessible, and responsive user experience across all devices.
+- **Smart AI Assistant:** Integrated AI capabilities using the Vercel AI SDK to help users discover meals and get support seamlessly.
+- **Advanced Data Management:** Rich data tables with **TanStack Table** and interactive analytics charts via **Recharts**.
+- **Dynamic Interactions:** Smooth page transitions and micro-animations powered by **Framer Motion**.
+- **Robust State & Form Management:** Validated forms using **Zod** and robust authentication state handling.
+- **Interactive Drag & Drop:** Intuitive UI elements utilizing **@dnd-kit** for advanced layout management.
+- **Theming:** Full Light/Dark mode support via `next-themes`.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Core
+- **Framework:** Next.js (App Router) v16+
+- **Library:** React 19
+- **Language:** TypeScript
+- **Authentication:** Better Auth
 
-## Deploy on Vercel
+### Styling & UI
+- **CSS Framework:** Tailwind CSS v4
+- **Components:** Shadcn UI, Radix UI
+- **Animations:** Framer Motion, Tailwind Animate
+- **Icons:** Lucide React, Tabler Icons
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Tools & Utilities
+- **AI Integration:** `@ai-sdk/react`, `@ai-sdk/google`
+- **Data Visualization:** Recharts
+- **Tables:** `@tanstack/react-table`
+- **Validation:** Zod
+- **Notifications:** Sonner, React Hot Toast
+- **Drag & Drop:** `@dnd-kit`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+Make sure you have the following installed on your local machine:
+- **Node.js** (v18 or higher)
+- **npm**, **yarn**, **pnpm**, or **bun**
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd foodhub-client
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Set up environment variables:**
+   Create a `.env.local` file in the root directory and configure the necessary environment variables (e.g., API base URL, Auth secrets, AI SDK keys).
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+   # Add other required variables
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open the app:**
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+---
+
+## 📂 Project Structure Overview
+
+- `src/app/`: Next.js App Router containing all pages (Admin, Provider, User routes, Auth).
+- `src/components/`: Reusable UI components (Navbar, Footer, Dashboards, Shadcn UI elements).
+- `src/lib/`: Utility functions and configurations.
+- `src/hooks/`: Custom React hooks for state and data fetching.
+- `src/types/`: TypeScript type definitions and interfaces.
+- `src/context/`: React Context providers (e.g., AuthContext).
+
+---
+
+## 👨‍💻 Author
+
+**Rakib Hasan**
+- Portfolio: [rakibhasan-dev.vercel.app](https://rakibhasan-dev.vercel.app)
+- GitHub: [@rakib-hasan3](https://github.com/rakib-hasan3)
+
+---
+
+> Feel free to explore the code, report issues, or submit pull requests. If you like the project, don't forget to leave a star ⭐ on the repository!
